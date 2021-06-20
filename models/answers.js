@@ -10,7 +10,7 @@ const AnswerSchema = Schema({
     answer:String,
     right:Number,
     time:String,
-    clicked:Boolean
+    clicked:Array
 })
 
 

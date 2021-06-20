@@ -58,7 +58,7 @@ function answerquery(req,res){
         answer.answerdby = req.user.sub;
         answer.answer = req.body.answer;
         answer.right = 0;
-        answer.clicked = false;
+        
         answer.time = moment().unix();
         answer.save((err,saved)=>{
             if(err){
@@ -84,7 +84,7 @@ function answerquery(req,res){
 
 function rightvote(req,res){
     var id = req.params.id
-    Answer.findOneAndUpdate({_id:id},{$inc:{right:1},$set:{clicked:true}}).exec((err,done)=>{
+    Answer.findOneAndUpdate({_id:id},{$inc:{right:1},$push:{clicked:req.user.sub}}).exec((err,done)=>{
         if(err){
             return res.send({messege:'Error Occured'});
         }
@@ -96,7 +96,9 @@ function rightvote(req,res){
 
 function wrongvote(req,res){
     var id = req.params.id
-    Answer.findOneAndUpdate({_id:id},{$inc:{right:-1},$set:{clicked:false}}).exec((err,done)=>{
+    console.log(req.user.sub)
+    console.log(typeof(req.user.sub))
+    Answer.findOneAndUpdate({_id:id},{$inc:{right:-1},$pullAll:{clicked:[req.user.sub]}}).exec((err,done)=>{
         if(err){
             return res.send({messege:'Error Occured'});
         }
